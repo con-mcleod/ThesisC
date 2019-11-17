@@ -140,12 +140,12 @@ def knn_model(train_x, test_x, train_y, test_y):
 if __name__ == '__main__':
 
 	# create 2018 df from 2018 csv
-	data_file = "datasets/nsw_history.csv"
+	data_file = "datasets/tas_history.csv"
 	df_train = csv_to_df(data_file)
 
 	
 	# create forecast df from forecast.db
-	cxn = sqlite3.connect('datasets/nsw_report.db')
+	cxn = sqlite3.connect('datasets/tas_report.db')
 	cursor = cxn.cursor()
 	cursor.execute("DROP TABLE IF EXISTS SPOT_KNN")
 	cursor.execute("DROP TABLE IF EXISTS SPOT_RFR")
@@ -158,8 +158,8 @@ if __name__ == '__main__':
 	df_train = df_train.dropna()
 	
 	# define dependent and independent variables
-	target = ['spot']
-	train_features = ['demand','temp','hour']  					# 'demand_lag'
+	target = ['spot_price']
+	train_features = ['demand','curr_temp','hour']  					# 'demand_lag'
 	num_features = len(train_features)
 	print ('\nFeatures used: ', train_features)
 
@@ -168,14 +168,14 @@ if __name__ == '__main__':
 
 	# Define training data (2018 data)
 	data_x = df_train[train_features].values
-	data_y = df_train['spot'].values
+	data_y = df_train['spot_price'].values
 	train_x, test_x, train_y, test_y = train_test_split(data_x, data_y, test_size=0.05)
 
 	for demand_model in ["rfr_demand","knn_demand"]:
 
 		table_name = "spot" + "_" + demand_model[0:3]
 
-		test_features = [demand_model,'temp','hour']
+		test_features = [demand_model,'curr_temp','hour']
 		forecast = df_test[test_features].values
 
 		# Random forest

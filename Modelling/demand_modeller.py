@@ -174,11 +174,11 @@ if __name__ == '__main__':
 
 
 	# create 2018 df from 2018 csv
-	data_file = "datasets/nsw_history.csv"
+	data_file = "datasets/tas_history.csv"
 	df_train = csv_to_df(data_file)
 
 	# create forecast df from forecast.db
-	cxn = sqlite3.connect('datasets/nsw_report.db')
+	cxn = sqlite3.connect('datasets/tas_report.db')
 	cursor = cxn.cursor()
 	cursor.execute("DROP TABLE IF EXISTS DEMAND_FORECAST")
 	cursor.close()
@@ -186,7 +186,7 @@ if __name__ == '__main__':
 	df_test = pd.read_sql_query("SELECT * FROM forecast", cxn)
 	# df_test = df_test.loc[df_test.RCP == RCP_value]
 	df_test["temp_forecast"] = pd.to_numeric(df_test["temp_forecast"])
-	df_test.rename(columns={'temp_forecast':'temp'}, inplace=True)
+	df_test.rename(columns={'temp_forecast':'curr_temp'}, inplace=True)
 
 	# add a lag term for demand
 	df_train['demand_lag'] = df_train['demand'].shift(1)
@@ -194,7 +194,7 @@ if __name__ == '__main__':
 	
 	# define dependent and independent variables
 	target = ['demand']
-	features = ['temp','hour']
+	features = ['curr_temp','hour']
 	num_features = len(features)
 	print ('\nFeatures used: ', features)
 
