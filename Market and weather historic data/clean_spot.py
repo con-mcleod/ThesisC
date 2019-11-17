@@ -87,6 +87,8 @@ def csv_to_sql(files):
 				state = row[0][0:3]
 				if state == "SA1":
 					state = state[0:2]
+				state = state.lower()
+					
 				year = row[1][0:4]
 				month = row[1][5:7]
 				day = row[1][8:10]
